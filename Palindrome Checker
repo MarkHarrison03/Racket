@@ -1,0 +1,67 @@
+Mark Harrison 21335265
+
+The problem I wanted to solve was how to write a function that returns whether the input is a palindrome or not, regardless of if the input value was a list, an integer, a floating point number or a string. 
+
+In my final draft i took comments from the forum into account, such as reformatting.
+
+At the bottom there is various different test data for different types of data.
+
+#lang racket
+;;checks type using a series of conditionals and sends the data to the corresponding function 
+(define Palindrome (lambda (x) (if ( list? x) (listPalindromeChecker x)
+                                   (if (exact-integer? x) (integerPalindromeChecker  x)
+                                       (if (boolean? x) '(invalid input)
+                                           (if (flonum? x) (floatPalindromeChecker x)
+                                               (if (string? x) (stringPalindromeChecker x) (error '(whoops)))))))))
+
+
+;;checks for list palindromes 
+(define listPalindromeChecker (lambda (x) (if (equal? x (reverse x)) #t #f)))
+;; checks for integer palindromes using recursion
+(define integerPalindromeChecker (lambda (x) (if (equal? (intToList x) (reverse (intToList x))) #t #f)))
+(define intToList  (lambda (x) (if (zero? x) '() (append (intToList (quotient x 10)) (list (remainder x 10))))))
+
+;;checks for float palindromes
+(define floatPalindromeChecker (lambda (x) (equal? (string->list (number->string x)) (reverse (string->list (number->string x)))))) 
+;; checks for string palindromes
+(define stringPalindromeChecker (lambda (x) (if ( equal? (string->list x) (reverse (string->list x))) #t #f)))
+
+;;test data, integers
+(Palindrome 1) ;;expect True
+(Palindrome -5) ;;expect true
+(Palindrome 22) ;;expect True
+(Palindrome 0) ;;expect True
+(Palindrome 12) ;;Expect False
+(Palindrome 2134215421) ;;explect False
+(Palindrome 213343312) ;;Expect True
+(Palindrome -43) ;;expect False
+(Palindrome -44);; expect true
+(Palindrome (- 5 3)) ;;expect true
+(Palindrome (+ 55 33)) ;;expect true
+(Palindrome (+ 54 3)) ;;expect false
+
+
+;;test data, string
+(Palindrome "hi") ;;expect false
+(Palindrome "") ;;expect true
+(Palindrome "hhhhh") ;;expect true
+(Palindrome "how are you today") ;;expect false
+(Palindrome "John and EdwardrawdE dna nhoJ") ;;expect True
+(Palindrome "Hey fF yeH") ;; expect false
+
+;;test data, list
+(Palindrome '(a b c d e f)) ;; expect false
+(Palindrome '(a b c 12 3 12 c b a))  ;expect true
+(Palindrome '(x y zz y x)) ;;expect true
+(Palindrome '(r a c e c a r )) ;;expect true
+
+;;test data, boolean
+(Palindrome #t) ;;expect invalid input
+(Palindrome #f) ;;expect invalid input
+
+;;test data, float
+(Palindrome 1.0) ;;expect false
+(Palindrome 1.1);; expect true
+(Palindrome 50.05) ;;expect true
+(Palindrome 33.33) ;;expect true
+(Palindrome 26.1) ;;expect false
